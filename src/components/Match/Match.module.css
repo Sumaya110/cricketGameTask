@@ -1,0 +1,233 @@
+.flexContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+
+.leftColumn {
+    float: left;
+    margin-left: 120px;
+  }
+
+
+.rightColumn{
+    float: right;
+    margin-right: 120px;
+}
+
+.button , .button3, .button4{
+    background-color: #4caf50; /* Green background color */
+    border: none; /* Remove borders */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Add padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 16px; /* Set font size */
+    margin: 4px 2px; /* Add some margin */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    border-radius: 4px; /* Optional: Add rounded corners */
+  }
+
+  .button2 {
+    background-color: #af684c; /* Green background color */
+    border: none; /* Remove borders */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Add padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 16px; /* Set font size */
+    margin: 4px 2px; /* Add some margin */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    border-radius: 4px; /* Optional: Add rounded corners */
+  }
+  
+  .button:hover {
+    background-color: #106714; /* Darker green on hover */
+  }
+
+  .button2:hover {
+    background-color: #aa1c1c; /* Darker green on hover */
+  }
+
+  .cell {
+    background-color: #4caf50; /* Green background color */
+    border: none; /* Remove borders */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Add padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 16px; /* Set font size */
+    margin: 4px 2px; /* Add some margin */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    border-radius: 4px; /* Optional: Add rounded corners */
+    width: 100%;
+    height: 100%;
+    /* transition: background-color 0.3s; */
+  }
+  .cell:hover {
+    background-color: #cf1127; /* Change to your desired hover background color */
+  }
+
+  .selected {
+  background-color: red; /* Change the background color for selected players */
+  /* transition: background-color 0.3s; */
+}
+
+
+  .centeredContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    /* background-color: cyan; */
+    flex-direction: column;
+    /* justify-content: space-between; */
+
+    /* margin-left: 500px; */
+  }
+
+
+  .centeredContainer2 {
+    /* display: flex;
+    justify-content: center; */
+    margin-top: 300px;
+    /* margin-right: 800px; */
+  }
+  
+  
+
+  .matchSection {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .selectedPlayersSection {
+    background-color: #d6f5d6;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .label {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .selectContainer {
+    margin-bottom: 50px;
+  }
+  
+  .startMatchSection {
+    margin-bottom: 20px;
+  }
+  
+  .simulateBallSection {
+    margin-bottom: 20px;
+  }
+
+
+
+  
+  .table {
+    border-collapse: collapse;
+    width: 30%;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    color: white;
+  }
+  
+  .table th {
+    background-color: #f2f2f2;
+  }
+
+
+  .lowerDiv {
+    /* background-color: #3117c7; */
+    padding: 20px;
+  }
+
+  .align{
+    align-items: center;
+  }
+
+
+  /* Add this style to match.module.css */
+
+.tableContainer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 300px;
+  margin: 10px;
+  background-color: #0e9f95; /* Add your desired background color here */
+}
+
+.table th, .table td {
+  border: 1px solid #eaf7f0;
+  padding: 8px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.table th {
+  background-color: #22b77e;
+}
+
+.centeredContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.tossResult {
+  margin-top: 30px;
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration-color: #aa1c1c;
+  /* align-items: center; */
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+
+.matchButton{
+  /* padding-left: 1000px; */
+  text-align: center;
+  padding-top: 20px;
+  border-radius: 4px;
+}
+
+.myDiv {
+  /* position: fixed; */
+  right: 10px;
+  /* padding-top: 10px; */
+  background-color: rgb(6, 74, 6);
+  padding-right: 20px;
+  text-align: center;
+  font-size: large;
+  font-weight: 600;
+  color: #f2f2f2;
+  margin: 4px 2px;
+  padding: 10px 20px; 
+  border-radius: 4px;
+}
+
+.button3 {
+  margin-left: 135px;
+}
+
+.button4 {
+  margin-left: 100px;
+}
+

@@ -1,0 +1,27 @@
+/* match.module.css */
+
+.container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .tossContainer {
+    margin-top: 20px;
+  }
+  
+  .tossButton {
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .tossResult {
+    margin-top: 10px;
+    font-size: 18px;
+  }
+  
+  .matchTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  

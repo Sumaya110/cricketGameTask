@@ -1,0 +1,35 @@
+/* MatchEnd.module.css */
+
+.matchEndContainer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    margin: 20px;
+  }
+  
+  .heading {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    color: #555;
+    font-size: 18px;
+  }
+
+  .button {
+    background-color: #4caf50; /* Green background color */
+    border: none; /* Remove borders */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Add padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 16px; /* Set font size */
+    margin: 4px 2px; /* Add some margin */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    border-radius: 4px; /* Optional: Add rounded corners */
+  }
+  

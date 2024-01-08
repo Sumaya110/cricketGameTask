@@ -1,0 +1,35 @@
+/* Define your CSS classes here */
+
+.teamSelectionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+  }
+  
+  .chooseOversContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+  }
+  
+  .chooseOversTitle {
+    margin-bottom: 10px;
+  }
+  
+  .chooseOversSelect {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .pageTitle {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+  }
+  
+  .teamSelectionSubtitle {
+    margin-top: 10px;
+  }
+  

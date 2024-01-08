@@ -1,0 +1,41 @@
+/* MatchSummary.module.css */
+
+.pp {
+  background-color: #c90b0b;
+  color: aliceblue;
+  padding: 10px;
+  text-align: center;
+  font-size: x-large;
+}
+
+.summaryContainer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.teamSummary {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 45%;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.summaryTable th,
+.summaryTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.summaryTable th {
+  background-color: #f2f2f2;
+}
+
+/* Add more styles as needed */
+

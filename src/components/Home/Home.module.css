@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    flex-direction: column; /* Change to column */
+    gap: 10px; /* Add gap between the two sections */
+    align-items: center;
+    padding: 20px; /* Adjust the padding as needed */
+    background-color: #f5f5f5; /* Off-white background color */
+    margin-top: 300px;
+  }
+  
+  .subContainer {
+    display: flex;
+    gap: 10px; /* Adjust the gap between the select containers */
+  }
+  
+  .selectContainer {
+    flex: 1; /* Allow the select containers to grow and fill available space */
+  }
+  
+  .select {
+    width: 100%; /* Make the select element fill the container */
+    padding: 10px; /* Adjust padding as needed */
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 5px; /* Add border radius */
+    background-color: rgb(38, 25, 212);
+    color: aliceblue;
+    font-size: xx-large;
+  }
+  
+  .button {
+    padding: 10px; /* Adjust padding as needed */
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Button text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: xx-large;
+    margin-top: 30px;
+  }
+  
+  .button:hover {
+    background-color: #0056b3; /* Button background color on hover */
+  }
+  
+  
