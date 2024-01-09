@@ -1,34 +1,34 @@
 import Match from "../models/matchModel";
 
-const createMatch = async({data}) => {
+const create = async({data}) => {
+//    console.log("data dekhao : ", data)
    const response = await Match.create(data)
    return response;
 }
 
-// const findById = async({user_id}) => {
-//    const task = await taskModel.findById({user_id})
-//    return task;
-// }
 
-// const create = async({title, user_id}) => {
-//    const task = await taskModel.create({title, user_id})
-//    return task;
-// }
 
-// const findOneAndDelete = async({_id: id}) => {
-//    const task = await taskModel.findOneAndDelete({_id: id})
-//    return task;
-// }
+const findOneAndUpdate = async (updateData) => {
+    // console.log("ffff", updateData);
+    const response = await Match.findOneAndUpdate(
+      { _id: updateData.matchId }, // Use an object with the key "_id" to represent the matchId
+      updateData.updatedData, // Assuming updateData has an 'updatedData' property
+      { new: true } // To return the updated document
+    );
+    return response;
+  };
 
-// const findOneAndUpdate = async ({ id, ...updateData }) => {
-//    const task = await taskModel.findOneAndUpdate({ _id: id }, updateData, {
-//      new: true,
-//    });
-//    return task;
-//  };
+
+
+  const findById = async (id) => {
+    console.log("idddd  :", id)
+    const response = await Match.findById(id);
+    return response;
+  };
+
 
 const Repository = {
-    createMatch,
+    create, findOneAndUpdate,findById,
 }
 
 export default Repository

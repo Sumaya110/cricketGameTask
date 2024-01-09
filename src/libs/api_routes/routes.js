@@ -11,20 +11,15 @@ API.interceptors.request.use((req)=>{
 })
 
 API.interceptors.response.use((res)=>{
-    res
+    return res;
 })
 
 
 
-// API function to create a score
 export const createNewMatch = (payload) => API.post('/api/matches', payload);
 
-// // API function to update a score
-// export const apiUpdateScore = (scoreId, payload) => API.patch(`/api/scores/${scoreId}`, payload);
+export const updateNewMatch = (payload) => API.patch('/api/matches', payload);
 
-// // API function to get a score by ID
-// export const apiGetScore = (scoreId) => API.get(`/api/scores/${scoreId}`);
+export const getNewMatch = (payload) => API.get('/api/matches', {params:{id: payload}});
 
 
-
-export default API;

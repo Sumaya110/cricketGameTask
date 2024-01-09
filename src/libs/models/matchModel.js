@@ -14,7 +14,8 @@ const matchSchema = new mongoose.Schema({
   team1: { type: String, default: null },
   team2: { type: String, default: null },
   
-  run: { type: Number, default: 0 },
+  // run: { type: Number, default: 0 },
+  run: { type: mongoose.Schema.Types.Mixed, default: 0 },
   score: { type: Number, default: 0 },
   wickets: { type: Number, default: 0 },
   balls: { type: Number, default: 0 },
@@ -47,6 +48,6 @@ const matchSchema = new mongoose.Schema({
   overHistory: { type: [{ type: mongoose.Schema.Types.Mixed }], default: [] },
 });
 
-const Match = mongoose.model('Match', matchSchema);
+const Match =mongoose.models?.Match || mongoose.model('Match', matchSchema);
 
 module.exports = Match;
