@@ -3,34 +3,9 @@ import teams from "@/data/teams";
 import styles from "./Match.module.css";
 import { useRouter } from "next/router";
 import { updateMatch, getMatch } from "@/libs/action/matchAction";
-// import axios from 'axios';
 
 const Match = () => {
   const router = useRouter();
-
-  // const [yourState, setYourState] = useState({
-  //   battingOrder: [],
-  //   bowlers: [],
-  //   currentBatsman: null,
-  //   currentBowler: null,
-  //   lastBowler: nul,
-  //   run: 0,
-  //   score: 0,
-  //   wickets: 0,
-  //   balls: 0,
-  //   curOver: 0,
-  //   selectedBatsmen: [],
-  //   selectedOvers: null,
-  //   switchTeamFlag: null,
-  //   target: null,
-  //   matchStarted:null,
-  //   end: null,
-  //   switchTeamDone: null,
-  //   batsmen: [],
-  //   bowlerArray: [],
-  //   overHistory: [],
-  // });
-
   const [battingTeam, setBattingTeam] = useState(null);
   const [bowlingTeam, setBowlingTeam] = useState(null);
 
@@ -43,9 +18,6 @@ const Match = () => {
 
   const [tossWinner, setTossWinner] = useState(null);
   const [tossDecision, setTossDecision] = useState(null);
-
-  const [team1, setTeam1] = useState(null);
-  const [team2, setTeam2] = useState(null);
 
   const [run, setRun] = useState(0);
   const [score, setScore] = useState(0);
@@ -67,12 +39,82 @@ const Match = () => {
   const [bowlerArray, setBowlerArray] = useState([]);
   const [overHistry, setOverHistry] = useState([]);
 
-  const { matchId } = router.query;
+  const matchId = router.query.id;
+  // console.log("match id from match page: ", matchId);
+
+  const updateData = async () => {
+    try {
+      console.log("match id from use effect  ", matchId);
+      console.log("batting order", battingOrder);
+      console.log("bowlers  :", bowlers);
+      await updateMatch(matchId, {
+        battingOrder: battingOrder,
+        bowlers: bowlers,
+        currentBatsman: currentBatsman,
+        currentBowler: currentBowler,
+        lastBowler: lastBowler,
+        run: run,
+        score: score,
+        wickets: wickets,
+        balls: balls,
+        curOver: curOver,
+        selectedBatsmen: selectedBatsmen,
+        selectedOvers: selectedOvers,
+        switchTeamFlag: switchTeamFlag,
+        target: target,
+        matchStarted: matchStarted,
+        end: end,
+        switchTeamDone: switchTeamDone,
+        batsmen: batsmen,
+        bowlerArray: bowlerArray,
+        overHistory: overHistry,
+      });
+    } catch (error) {
+      console.error("Error updating all data :", error);
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const updatedData = await getMatch(matchId);
+
+      // Use the updatedData to set the state
+      setBattingOrder(updatedData.battingOrder);
+      setBowlers(updatedData.bowlers);
+      setCurrentBatsman(updatedData.currentBatsman);
+      setCurrentBowler(updatedData.currentBowler);
+      setLastBowler(updatedData.lastBowler);
+      setRun(updatedData.run);
+      setScore(updatedData.score);
+      setWickets(updatedData.wickets);
+      setBalls(updatedData.balls);
+      setCurOver(updatedData.curOver);
+      setSelectedBatsmen(updatedData.selectedBatsmen);
+      
+      setSwitchTeamFlag(updatedData.switchTeamFlag);
+      setTarget(updatedData.target);
+      
+      setEnd(updatedData.end);
+      setSwitchTeamDone(updatedData.switchTeamDone);
+      setBatsmen(updatedData.batsmen);
+      setBowlerArray(updatedData.bowlerArray);
+      setOverHistry(updatedData.overHistory);
+
+      console.log("over history after database get!! : ", overHistry);
+    } catch (error) {
+      console.error("Error fetching match data:", error);
+    }
+  };
 
   useEffect(() => {
     const team1 = JSON.parse(localStorage.getItem("battingTeam"));
     const team2 = JSON.parse(localStorage.getItem("bowlingTeam"));
-    const over = JSON.parse(localStorage.getItem("over"));
+    const over = JSON.parse(localStorage.getItem("selectedOver"));
+    const tossWiner = JSON.parse(localStorage.getItem("tossWiner"));
+    const tossDecision = JSON.parse(localStorage.getItem("tossDecision"));
+
+    setTossWinner(tossWiner);
+    setTossDecision(tossDecision);
 
     setSelectedOvers(over);
     setBattingTeam(team1);
@@ -83,50 +125,40 @@ const Match = () => {
     setCurrentBatsman(battingOrder[0]);
   }, [battingOrder]);
 
+  // useEffect(() => {
+  //   if (matchId) updateData();
+  // }, [ balls, battingOrder, currentBowler]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log("match id from use effect  ", matchId);
-        await updateMatch(matchId, {
-          battingOrder: battingOrder,
-          bowlers: bowlers,
-          currentBatsman: currentBatsman,
-          currentBowler: currentBowler,
-          lastBowler: lastBowler,
-          run: run,
-          score: score,
-          wickets: wickets,
-          balls: balls,
-          curOver: curOver,
-          selectedBatsmen: selectedBatsmen,
-          selectedOvers: selectedOvers,
-          switchTeamFlag: switchTeamFlag,
-          target: target,
-          matchStarted: matchStarted,
-          end: end,
-          switchTeamDone: switchTeamDone,
-          batsmen: batsmen,
-          bowlerArray: bowlerArray,
-          overHistory: overHistry,
-        });
-      } catch (error) {
-        console.error("Error updating all data :", error);
-      }
+    if (matchId) getData();
+  }, [matchId]);
 
-      const updatedData = await getMatch(matchId);
-      // setBattingOrder(updatedData.battingOrder)
-    };
 
-    fetchData();
-  }, [matchId, balls, battingOrder, currentBowler]);
+  useEffect(() => {
+    setBatsmen(getBatsmanScore(run));
+    setBowlerArray(updatePlayerStats(currentBowler));
 
-  //getBatsmanScore
+    localStorage.setItem("batsmen", JSON.stringify(batsmen));
+    localStorage.setItem("bowlerArray", JSON.stringify(bowlerArray));
+
+    if (balls === 0) setCurrentBowler(null);
+
+    if (balls === 1) {
+      const newArray = [run];
+      setOverHistry(newArray);
+    } else {
+      const newArray = [...(overHistry || []), run];
+      setOverHistry(newArray);
+    }
+
+    if (run != "w" && run % 2) {
+      if (!(balls === 0 && curOver)) switchBatsman();
+    }
+
+    // if (matchId) getData()
+  }, [balls]);
+
   const getBatsmanScore = (run) => {
-    // console.log("current batsman", currentBatsman);
-    // console.log("batting order", battingOrder[0], battingOrder[1]);
-
-    // console.log("batsmen....", batsmen);
-
     const updatedBatsmen = [...batsmen];
     const currentBatsmanIndex = updatedBatsmen.findIndex(
       (batsman) => batsman.name === currentBatsman
@@ -140,8 +172,6 @@ const Match = () => {
         if (run === 6) updatedBatsmen[currentBatsmanIndex].six += 1;
       } else updatedBatsmen[currentBatsmanIndex].out = "OUT";
     } else {
-      // console.log("inserting current batsman");
-
       updatedBatsmen.push({
         name: currentBatsman,
         runs: 0,
@@ -163,38 +193,8 @@ const Match = () => {
       } else updatedBatsmen[currentBatsmanIndex].out = "OUT";
     }
 
-    // console.log("balls", balls);
-    // console.log("runs", run);
-    // console.log("updated batsmen array", updatedBatsmen); // Log the updated state
-
     return updatedBatsmen;
   };
-
-  useEffect(() => {
-    setBatsmen(getBatsmanScore(run));
-    setBowlerArray(updatePlayerStats(currentBowler));
-
-    localStorage.setItem("batsmen", JSON.stringify(batsmen));
-    localStorage.setItem("bowlerArray", JSON.stringify(bowlerArray));
-
-    if (balls === 0) setCurrentBowler(null);
-
-    if (balls === 1) {
-      const newArray = [run];
-      setOverHistry(newArray);
-    } else {
-      const newArray = [...(overHistry || []), run];
-      setOverHistry(newArray);
-    }
-
-    // console.log("overHistory !!! ", overHistry);
-
-    if (run != "w" && run % 2) {
-      if (!(balls === 0 && curOver)) switchBatsman();
-    }
-
-    // console.log("ballssssssss  ....", balls);
-  }, [balls]);
 
   const handleBattingOrderChange = (player) => {
     if (battingOrder.length < 2 && !selectedBatsmen.includes(player)) {
@@ -205,7 +205,6 @@ const Match = () => {
   };
 
   // now handle bowler change
-
   const handleBowlersChange = (player) => {
     setOverHistry(null);
     if (bowlers.length === 0 || bowlers[bowlers.length - 1] !== player) {
@@ -223,9 +222,6 @@ const Match = () => {
   };
 
   const updatePlayerStats = (player) => {
-    // console.log("current player", player);
-    // console.log("stats", stats);
-
     const updatedBowlerArray = [...bowlerArray];
     const currentPlayerIndex = updatedBowlerArray.findIndex(
       (item) => item.name === player
@@ -247,8 +243,6 @@ const Match = () => {
         updatedBowlerArray[currentPlayerIndex].over +=
           updatedBowlerArray[currentPlayerIndex].balls / 10;
     } else {
-      // console.log("inserting current bowler");
-
       updatedBowlerArray.push({
         name: player,
 
@@ -283,8 +277,10 @@ const Match = () => {
     return updatedBowlerArray;
   };
 
+  
   //simulate ball
-  const simulateBall = () => {
+  const simulateBall = async () => {
+
     const isWicket = Math.random() < 0.1;
 
     if (isWicket) {
@@ -318,13 +314,16 @@ const Match = () => {
 
     const curBalls = balls + 1;
 
+    let calOver =Math.floor(curOver)+ Math.floor(curBalls/6);
+    if(curBalls%6) calOver+=(curBalls/10);
+    setCurOver(calOver);
+
     if (curBalls === 6) {
-      setCurOver(curOver + 1);
       setBalls(0);
     } else setBalls(curBalls);
 
     if (curBalls === 6) {
-      if (curOver + 1 == selectedOvers) {
+      if ( curOver + 1 == selectedOvers) {
         // console.log("lalala", curOver, selectedOvers);
 
         if (switchTeamFlag) setEnd(1);
@@ -335,25 +334,26 @@ const Match = () => {
         setMatchStarted(false);
       }
     }
-    // }
+
+
+    if (matchId) {
+      await updateData();
+      // await getData();
+    }
   };
 
   const switchBatsman = () => {
     if (battingOrder.length === 2) {
-      // Swap the positions of the two batsmen
-
       const [batsman1, batsman2] = battingOrder;
       setBattingOrder([batsman2, batsman1]);
 
       console.log("Batsmen swapped:", battingOrder);
-      // setCurrentBatsman(battingOrder[1]);
     } else {
       console.log("Insufficient batsmen in the batting order");
     }
   };
 
   const newBatsman = () => {
-    // Find the next available batsman who hasn't been selected
     const remainingBatsmen = teams[battingTeam].filter(
       (player) => !selectedBatsmen.includes(player)
     );
@@ -376,12 +376,9 @@ const Match = () => {
 
     localStorage.setItem("switchTeamDone", JSON.stringify(true));
     alert("team switched");
-    // if (switchTeamFlag) setEnd(1)
 
     setSwitchTeamFlag(1);
-
     setTarget(score + 1);
-    // setOverFill(null)
 
     setCurrentBatsman(null);
     setCurrentBowler(null);
@@ -402,11 +399,12 @@ const Match = () => {
   };
 
   const startMatch = () => {
-    // console.log("over  ", selectedOvers);
-    // console.log("batsman  ", battingOrder.length);
+    console.log("over  ", selectedOvers);
+    console.log("batsman  ", battingOrder.length);
 
     if (battingOrder.length >= 2 && currentBowler && selectedOvers) {
       setMatchStarted(true);
+      console.log("from start match function : ");
     } else {
       if (battingOrder.length == 0) alert("select two batsman");
       else if (battingOrder.length == 1) alert("select second batsman");
@@ -423,7 +421,9 @@ const Match = () => {
   };
 
   const matchSummary = () => {
+    if(matchId) updateData();
     router.push("/match/match-summary");
+
   };
 
   return (

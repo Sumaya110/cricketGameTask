@@ -18,6 +18,10 @@ const Home = () => {
     const winner = teams[randomIndex];
     const decision = Math.random() < 0.5 ? "bat" : "bowl";
 
+    localStorage.setItem("selectedOver", JSON.stringify(over));
+    localStorage.setItem("tossWiner", JSON.stringify(winner));
+    localStorage.setItem("tossDecision", JSON.stringify(decision));
+
     try {
       if (winner) {
         const winnerTeam = winner.split(" ")[0];
@@ -25,19 +29,21 @@ const Home = () => {
           (team) => team !== winnerTeam
         );
 
-        const id = await createMatch({});
+        const matchId = await createMatch({});
 
-        console.log("id from home ", id);
+        console.log("id from home ", matchId);
 
-        await updateMatch(id, {
+        await updateMatch(matchId, {
           tossWinner: winner,
           tossDecision: decision,
+          selectedOvers: over,
+          
         });
 
         if (decision === "bat") {
-          console.log("match idddd!!! bat ", id);
+          console.log("match idddd!!! bat ", matchId);
 
-          await updateMatch(id, {
+          await updateMatch(matchId, {
             battingTeam: winnerTeam,
             bowlingTeam: otherTeam,
           });
@@ -45,8 +51,8 @@ const Home = () => {
           localStorage.setItem("battingTeam", JSON.stringify(winnerTeam));
           localStorage.setItem("bowlingTeam", JSON.stringify(otherTeam));
         } else {
-          console.log("match idddd!!! ball ", id);
-          await updateMatch(id, {
+          console.log("match idddd!!! ball ", matchId);
+          await updateMatch(matchId, {
             battingTeam: otherTeam,
             bowlingTeam: winnerTeam,
           });
@@ -55,7 +61,8 @@ const Home = () => {
           localStorage.setItem("bowlingTeam", JSON.stringify(winnerTeam));
         }
 
-        router.push(`/match?matchId=${id}`);
+        // router.push(`/match?matchId=${id}`);
+        router.push(`/match/${matchId}`);
       }
 
      
