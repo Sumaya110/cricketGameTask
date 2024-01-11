@@ -41,7 +41,7 @@ async function updateMatch(matchId, updatedData) {
 
 async function getMatch(matchId) {
 
-  console.log("match idddd:::::  ",matchId)
+  // console.log("match idddd:::::  ",matchId)
   try {
     const response = await getNewMatch(matchId);
     

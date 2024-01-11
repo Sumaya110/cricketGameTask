@@ -11,10 +11,7 @@ const matchSchema = new mongoose.Schema({
   lastBowler: { type: String, default: null },
   tossWinner: { type: String, default: null },
   tossDecision: { type: String, default: null },
-  team1: { type: String, default: null },
-  team2: { type: String, default: null },
   
-  // run: { type: Number, default: 0 },
   run: { type: mongoose.Schema.Types.Mixed, default: 0 },
   score: { type: Number, default: 0 },
   wickets: { type: Number, default: 0 },

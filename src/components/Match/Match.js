@@ -4,7 +4,8 @@ import styles from "./Match.module.css";
 import { useRouter } from "next/router";
 import { updateMatch, getMatch } from "@/libs/action/matchAction";
 
-const Match = () => {
+const Match = ({ Id }) => {
+  const matchId = Id;
   const router = useRouter();
   const [battingTeam, setBattingTeam] = useState(null);
   const [bowlingTeam, setBowlingTeam] = useState(null);
@@ -39,25 +40,28 @@ const Match = () => {
   const [bowlerArray, setBowlerArray] = useState([]);
   const [overHistry, setOverHistry] = useState([]);
 
-  const matchId = router.query.id;
-  // console.log("match id from match page: ", matchId);
+  const [currentBatsmanRun, setCurrentBatsmanRun] = useState(0);
 
   const updateData = async () => {
     try {
-      console.log("match id from use effect  ", matchId);
-      console.log("batting order", battingOrder);
-      console.log("bowlers  :", bowlers);
+      // console.log("match id from use effect  ", matchId);
+      // console.log("batting order", battingOrder);
+      // console.log("bowlers  :", bowlers);
       await updateMatch(matchId, {
+        battingTeam: battingTeam,
+        bowlingTeam: bowlingTeam,
         battingOrder: battingOrder,
         bowlers: bowlers,
         currentBatsman: currentBatsman,
         currentBowler: currentBowler,
         lastBowler: lastBowler,
+
         run: run,
         score: score,
         wickets: wickets,
         balls: balls,
         curOver: curOver,
+
         selectedBatsmen: selectedBatsmen,
         selectedOvers: selectedOvers,
         switchTeamFlag: switchTeamFlag,
@@ -65,6 +69,7 @@ const Match = () => {
         matchStarted: matchStarted,
         end: end,
         switchTeamDone: switchTeamDone,
+
         batsmen: batsmen,
         bowlerArray: bowlerArray,
         overHistory: overHistry,
@@ -77,23 +82,29 @@ const Match = () => {
   const getData = async () => {
     try {
       const updatedData = await getMatch(matchId);
+      console.log("updated data : ", updatedData);
 
       // Use the updatedData to set the state
+      setBattingTeam(updatedData.battingTeam);
+      setBowlingTeam(updatedData.bowlingTeam);
       setBattingOrder(updatedData.battingOrder);
       setBowlers(updatedData.bowlers);
       setCurrentBatsman(updatedData.currentBatsman);
       setCurrentBowler(updatedData.currentBowler);
       setLastBowler(updatedData.lastBowler);
+
       setRun(updatedData.run);
       setScore(updatedData.score);
       setWickets(updatedData.wickets);
       setBalls(updatedData.balls);
       setCurOver(updatedData.curOver);
+
       setSelectedBatsmen(updatedData.selectedBatsmen);
-      
       setSwitchTeamFlag(updatedData.switchTeamFlag);
       setTarget(updatedData.target);
-      
+
+      setMatchStarted(updatedData.matchStarted);
+
       setEnd(updatedData.end);
       setSwitchTeamDone(updatedData.switchTeamDone);
       setBatsmen(updatedData.batsmen);
@@ -107,6 +118,16 @@ const Match = () => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await getData();
+      } catch (error) {
+        console.error("Error updating data:", error);
+      }
+    };
+
+    fetchData();
+
     const team1 = JSON.parse(localStorage.getItem("battingTeam"));
     const team2 = JSON.parse(localStorage.getItem("bowlingTeam"));
     const over = JSON.parse(localStorage.getItem("selectedOver"));
@@ -121,44 +142,24 @@ const Match = () => {
     setBowlingTeam(team2);
   }, []);
 
-  useEffect(() => {
-    setCurrentBatsman(battingOrder[0]);
-  }, [battingOrder]);
-
   // useEffect(() => {
-  //   if (matchId) updateData();
-  // }, [ balls, battingOrder, currentBowler]);
 
-  useEffect(() => {
-    if (matchId) getData();
-  }, [matchId]);
+  //   const fetchData = async () => {
+  //     try {
 
+  //       //  await updateData();
+  //        await getData();
 
-  useEffect(() => {
-    setBatsmen(getBatsmanScore(run));
-    setBowlerArray(updatePlayerStats(currentBowler));
+  //     } catch (error) {
+  //       console.error('Error updating data:', error);
+  //     }
+  //   };
 
-    localStorage.setItem("batsmen", JSON.stringify(batsmen));
-    localStorage.setItem("bowlerArray", JSON.stringify(bowlerArray));
+  //   fetchData();
+  // }, [balls]);
 
-    if (balls === 0) setCurrentBowler(null);
-
-    if (balls === 1) {
-      const newArray = [run];
-      setOverHistry(newArray);
-    } else {
-      const newArray = [...(overHistry || []), run];
-      setOverHistry(newArray);
-    }
-
-    if (run != "w" && run % 2) {
-      if (!(balls === 0 && curOver)) switchBatsman();
-    }
-
-    // if (matchId) getData()
-  }, [balls]);
-
-  const getBatsmanScore = (run) => {
+  const getBatsmanScore = (currentBatsman, run) => {
+    console.log("receiving data in getbatsmanscore ", currentBatsman, run);
     const updatedBatsmen = [...batsmen];
     const currentBatsmanIndex = updatedBatsmen.findIndex(
       (batsman) => batsman.name === currentBatsman
@@ -188,15 +189,19 @@ const Match = () => {
       if (run != "w") {
         updatedBatsmen[currentBatsmanIndex].balls += 1;
         updatedBatsmen[currentBatsmanIndex].runs += run;
+        // setCurrentBatsmanRun(updatedBatsmen[currentBatsmanIndex].runs);
         if (run === 4) updatedBatsmen[currentBatsmanIndex].four += 1;
         if (run === 6) updatedBatsmen[currentBatsmanIndex].six += 1;
       } else updatedBatsmen[currentBatsmanIndex].out = "OUT";
     }
 
+    localStorage.setItem("batsmen", JSON.stringify(updatedBatsmen));
+
     return updatedBatsmen;
   };
 
   const handleBattingOrderChange = (player) => {
+    if (battingOrder.length === 1) setCurrentBatsman(battingOrder[0]);
     if (battingOrder.length < 2 && !selectedBatsmen.includes(player)) {
       setBattingOrder((prevOrder) => [...prevOrder, player]);
 
@@ -221,7 +226,7 @@ const Match = () => {
     }
   };
 
-  const updatePlayerStats = (player) => {
+  const updatePlayerStats = (player, run) => {
     const updatedBowlerArray = [...bowlerArray];
     const currentPlayerIndex = updatedBowlerArray.findIndex(
       (item) => item.name === player
@@ -274,15 +279,21 @@ const Match = () => {
 
     console.log("updated stats array", updatedBowlerArray); // Log the updated state
 
+    localStorage.setItem("bowlerArray", JSON.stringify(updatedBowlerArray));
+
     return updatedBowlerArray;
   };
 
-  
   //simulate ball
   const simulateBall = async () => {
+    await updateData();
+    await getData();
 
     const isWicket = Math.random() < 0.1;
+    let runs = Math.floor(Math.random() * 7);
+    const curBalls = balls + 1;
 
+    // after wicket gone
     if (isWicket) {
       setWickets(wickets + 1);
 
@@ -292,16 +303,20 @@ const Match = () => {
           setSwitchTeamFlag(1);
         }
       } else {
+        setCurrentBatsman(battingOrder[1]);
         setBattingOrder((prevOrder) => prevOrder.slice(1));
+
         newBatsman();
       }
 
       setRun("w");
-
-      // console.log("batsmen array", batsmen);
-      localStorage.setItem("batsmen", JSON.stringify(batsmen));
+      runs = "w";
     } else {
-      const runs = Math.floor(Math.random() * 7);
+      if ((runs % 2 && curBalls !== 6) || (run % 2 === 0 && curBalls === 6)) {
+        const [batsman1, batsman2] = battingOrder;
+        setBattingOrder([batsman2, batsman1]);
+        setCurrentBatsman(batsman2);
+      }
 
       setScore((prevScore) => prevScore + runs);
       setRun(runs);
@@ -312,20 +327,13 @@ const Match = () => {
       }
     }
 
-    const curBalls = balls + 1;
-
-    let calOver =Math.floor(curOver)+ Math.floor(curBalls/6);
-    if(curBalls%6) calOver+=(curBalls/10);
-    setCurOver(calOver);
-
     if (curBalls === 6) {
       setBalls(0);
+      setCurOver(curOver + 1);
     } else setBalls(curBalls);
 
     if (curBalls === 6) {
-      if ( curOver + 1 == selectedOvers) {
-        // console.log("lalala", curOver, selectedOvers);
-
+      if (curOver + 1 == selectedOvers) {
         if (switchTeamFlag) setEnd(1);
         else {
           setSwitchTeamFlag(1);
@@ -333,24 +341,16 @@ const Match = () => {
       } else {
         setMatchStarted(false);
       }
+
+      setCurrentBowler(null);
     }
 
+    const newArray = [...(overHistry || []), runs];
+    setOverHistry(newArray);
 
-    if (matchId) {
-      await updateData();
-      // await getData();
-    }
-  };
-
-  const switchBatsman = () => {
-    if (battingOrder.length === 2) {
-      const [batsman1, batsman2] = battingOrder;
-      setBattingOrder([batsman2, batsman1]);
-
-      console.log("Batsmen swapped:", battingOrder);
-    } else {
-      console.log("Insufficient batsmen in the batting order");
-    }
+    // console.log("sending data to getbatsmanscore ", currentBatsman, runs);
+    setBatsmen(getBatsmanScore(currentBatsman, runs));
+    setBowlerArray(updatePlayerStats(currentBowler, runs));
   };
 
   const newBatsman = () => {
@@ -364,6 +364,7 @@ const Match = () => {
       const [batsman1, batsman2] = battingOrder;
 
       setBattingOrder([nextBatsman, batsman2]);
+      setCurrentBatsman(nextBatsman);
 
       // Add the next batsman to the selected batsmen list
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, nextBatsman]);
@@ -420,10 +421,14 @@ const Match = () => {
     router.push("/match/match-end");
   };
 
-  const matchSummary = () => {
-    if(matchId) updateData();
+  const matchSummary = async () => {
+    await updateData();
+    await getData();
+
+    console.log("before match-summary");
     router.push("/match/match-summary");
 
+    console.log("after match summary");
   };
 
   return (
@@ -444,7 +449,7 @@ const Match = () => {
         </p>
       )}
 
-      {bowlingTeam && battingTeam && teams[battingTeam] ? (
+      {bowlingTeam && battingTeam ? (
         <>
           <div className={styles.flexContainer}>
             {/* left Column*/}
@@ -497,6 +502,11 @@ const Match = () => {
                       {battingOrder.map((player, index) => (
                         <tr key={index}>
                           <td>{player}</td>
+                          {/* <td>
+                            {player === currentBatsman
+                              ? `${player}(${run})`
+                              : player}
+                          </td> */}
                         </tr>
                       ))}
                     </tbody>
@@ -531,7 +541,7 @@ const Match = () => {
                 <div>
                   <p className={styles.myDiv}>
                     Score: {score}, Run: {run} ,wicket: {wickets}, ball: {balls}
-                    , over: {curOver}
+                    , over: {curOver}.{balls}
                   </p>
 
                   <div className={styles.align}>
