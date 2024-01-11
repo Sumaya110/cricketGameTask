@@ -43,10 +43,10 @@ const MatchSummary = () => {
 
   useEffect(() => {
     const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
-    console.log("from match summary ", Batsmen);
+    console.log("from match summary batsmen", Batsmen);
 
     const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
-    console.log("from match summary ", Bowlers);
+    console.log("from match summary bowlers ", Bowlers);
 
     setBatsmen(Batsmen);
     setBowlers(Bowlers);

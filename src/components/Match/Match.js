@@ -40,13 +40,9 @@ const Match = ({ Id }) => {
   const [bowlerArray, setBowlerArray] = useState([]);
   const [overHistry, setOverHistry] = useState([]);
 
-  const [currentBatsmanRun, setCurrentBatsmanRun] = useState(0);
-
+ 
   const updateData = async () => {
     try {
-      // console.log("match id from use effect  ", matchId);
-      // console.log("batting order", battingOrder);
-      // console.log("bowlers  :", bowlers);
       await updateMatch(matchId, {
         battingTeam: battingTeam,
         bowlingTeam: bowlingTeam,
@@ -118,16 +114,6 @@ const Match = ({ Id }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getData();
-      } catch (error) {
-        console.error("Error updating data:", error);
-      }
-    };
-
-    fetchData();
-
     const team1 = JSON.parse(localStorage.getItem("battingTeam"));
     const team2 = JSON.parse(localStorage.getItem("bowlingTeam"));
     const over = JSON.parse(localStorage.getItem("selectedOver"));
@@ -140,27 +126,32 @@ const Match = ({ Id }) => {
     setSelectedOvers(over);
     setBattingTeam(team1);
     setBowlingTeam(team2);
+
+    const fetchData = async () => {
+      try {
+        await getData();
+
+        // await updateMatch(matchId, {
+        //   selectedOvers: over,
+        //   battingTeam: team1,
+        //   bowlingTeam: team2,
+        // });
+      } catch (error) {
+        console.error("Error updating data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // useEffect(() => {
-
-  //   const fetchData = async () => {
-  //     try {
-
-  //       //  await updateData();
-  //        await getData();
-
-  //     } catch (error) {
-  //       console.error('Error updating data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [balls]);
-
-  const getBatsmanScore = (currentBatsman, run) => {
+  
+  const getBatsmanScore =  async (currentBatsman, run) => {
     console.log("receiving data in getbatsmanscore ", currentBatsman, run);
-    const updatedBatsmen = [...batsmen];
+
+    // const updatedBatsmen = [...batsmen];
+
+    const updatedBatsmen = Array.isArray(batsmen) ? [...batsmen] : [];
+
     const currentBatsmanIndex = updatedBatsmen.findIndex(
       (batsman) => batsman.name === currentBatsman
     );
@@ -197,37 +188,85 @@ const Match = ({ Id }) => {
 
     localStorage.setItem("batsmen", JSON.stringify(updatedBatsmen));
 
+    console.log("from match batsmen ",updatedBatsmen )
+
+        
+    await updateMatch(matchId, {
+      batsmen: updatedBatsmen,
+    });
+
     return updatedBatsmen;
   };
 
-  const handleBattingOrderChange = (player) => {
-    if (battingOrder.length === 1) setCurrentBatsman(battingOrder[0]);
+  const handleBattingOrderChange = async (player) => {
+    if (battingOrder.length === 1) {
+      setCurrentBatsman(battingOrder[0]);
+      await updateMatch(matchId, {
+        currentBatsman: battingOrder[0],
+      });
+    }
+
     if (battingOrder.length < 2 && !selectedBatsmen.includes(player)) {
       setBattingOrder((prevOrder) => [...prevOrder, player]);
-
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, player]);
+
+      let temp=selectedBatsmen;
+      temp.push(player);
+
+      let temp2=battingOrder;
+      temp2.push(player);
+
+      console.log("batsmen and batting order dekhao", temp, temp2)
+      console.log("length dekhao ", battingOrder.length,"  ", selectedBatsmen.length)
+
+      await updateMatch(matchId, {
+        battingOrder: temp2,
+        selectedBatsmen: temp,
+      });
     }
   };
 
   // now handle bowler change
-  const handleBowlersChange = (player) => {
+  const handleBowlersChange = async (player) => {
     setOverHistry(null);
+
+    await updateMatch(matchId, {
+      overHistory: null,
+    });
+
     if (bowlers.length === 0 || bowlers[bowlers.length - 1] !== player) {
+     
+
+      // console.log("print kore dekhao : ", (prevBowlers) => [...prevBowlers, player])
       setCurrentBowler(player);
       setLastBowler(player);
 
-      setBowlers((prevBowlers) => {
-        const newBowlers = [...prevBowlers, player];
+      let newArray=bowlers;
+      newArray.push(player);
 
-        return newBowlers;
+      // console.log("newArray dekhao : ", newArray)
+
+      setBowlers((prevBowlers) => [...prevBowlers, player]);
+      
+      
+
+      await updateMatch(matchId, {
+        currentBowler: player,
+        lastBowler: player,
+        bowlers: newArray,
       });
+
     } else {
       alert("Cannot choose the same bowler for consecutive overs.");
     }
   };
 
-  const updatePlayerStats = (player, run) => {
-    const updatedBowlerArray = [...bowlerArray];
+  const updatePlayerStats = async (player, run) => {
+    // const updatedBowlerArray = [...bowlerArray];
+    console.log("bowler array ", bowlerArray)
+    // const updatedBowlerArray = [...bowlerArray];
+    const updatedBowlerArray = Array.isArray(bowlerArray) ? [...bowlerArray] : [];
+
     const currentPlayerIndex = updatedBowlerArray.findIndex(
       (item) => item.name === player
     );
@@ -280,6 +319,11 @@ const Match = ({ Id }) => {
     console.log("updated stats array", updatedBowlerArray); // Log the updated state
 
     localStorage.setItem("bowlerArray", JSON.stringify(updatedBowlerArray));
+    console.log("from match bowler : ", updatedBowlerArray)
+
+    await updateMatch(matchId, {
+      bowlerArray: updatedBowlerArray,
+    });
 
     return updatedBowlerArray;
   };
@@ -296,33 +340,58 @@ const Match = ({ Id }) => {
     // after wicket gone
     if (isWicket) {
       setWickets(wickets + 1);
+      await updateMatch(matchId, { wickets: 1 });
 
       if (wickets === 10) {
-        if (switchTeamFlag) setEnd(1);
-        else {
+        if (switchTeamFlag) {
+          setEnd(1);
+          await updateMatch(matchId, { end: 1 });
+        } else {
           setSwitchTeamFlag(1);
+          await updateMatch(matchId, { switchTeamFlag: 1 });
         }
       } else {
         setCurrentBatsman(battingOrder[1]);
+        await updateMatch(matchId, { currentBatsman: battingOrder[1] });
         setBattingOrder((prevOrder) => prevOrder.slice(1));
+
+        // await updateMatch(matchId, {batt :battingOrder[1]})
 
         newBatsman();
       }
 
       setRun("w");
+      await updateMatch(matchId, { run: "w" });
       runs = "w";
     } else {
       if ((runs % 2 && curBalls !== 6) || (run % 2 === 0 && curBalls === 6)) {
         const [batsman1, batsman2] = battingOrder;
         setBattingOrder([batsman2, batsman1]);
+
         setCurrentBatsman(batsman2);
+
+        await updateMatch(matchId, {
+          battingOrde: [batsman2, batsman1],
+          currentBowler: batsman2,
+        });
       }
 
-      setScore((prevScore) => prevScore + runs);
+      // setScore((prevScore) => prevScore + runs);
+      setScore(score + runs);
+      // const temp= score+runs
+      // console.log("score dekhao : ", )
       setRun(runs);
+
+      await updateMatch(matchId, {
+        score: score + runs,
+        run: runs,
+      });
 
       if (target && score > target) {
         setEnd(1);
+        await updateMatch(matchId, {
+          end: 1,
+        });
         alert(" Target fullfilled");
       }
     }
@@ -330,48 +399,87 @@ const Match = ({ Id }) => {
     if (curBalls === 6) {
       setBalls(0);
       setCurOver(curOver + 1);
-    } else setBalls(curBalls);
+
+      await updateMatch(matchId, {
+        balls: 0,
+        curOver: curOver + 1,
+      });
+    } else {
+      setBalls(curBalls);
+      await updateMatch(matchId, {
+        balls: curBalls,
+      });
+    }
 
     if (curBalls === 6) {
       if (curOver + 1 == selectedOvers) {
-        if (switchTeamFlag) setEnd(1);
-        else {
+        if (switchTeamFlag) {
+          setEnd(1);
+          await updateMatch(matchId, {
+            end: 1,
+          });
+        } else {
           setSwitchTeamFlag(1);
+          await updateMatch(matchId, {
+            switchTeamFlag: 1,
+          });
         }
       } else {
         setMatchStarted(false);
+        await updateMatch(matchId, {
+          matchStarted: false,
+        });
       }
 
       setCurrentBowler(null);
+      await updateMatch(matchId, {
+        currentBowler: null,
+      });
     }
 
     const newArray = [...(overHistry || []), runs];
     setOverHistry(newArray);
+
+    await updateMatch(matchId, {
+      overHistory: newArray,
+    });
 
     // console.log("sending data to getbatsmanscore ", currentBatsman, runs);
     setBatsmen(getBatsmanScore(currentBatsman, runs));
     setBowlerArray(updatePlayerStats(currentBowler, runs));
   };
 
-  const newBatsman = () => {
+  const newBatsman = async () => {
     const remainingBatsmen = teams[battingTeam].filter(
       (player) => !selectedBatsmen.includes(player)
     );
 
     if (remainingBatsmen.length > 0) {
       const nextBatsman = remainingBatsmen[0];
-
       const [batsman1, batsman2] = battingOrder;
 
       setBattingOrder([nextBatsman, batsman2]);
       setCurrentBatsman(nextBatsman);
 
+      
+
       // Add the next batsman to the selected batsmen list
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, nextBatsman]);
+      let temp=selectedBatsmen;
+      temp.push(nextBatsman)
+
+      console.log("new batsman add dekhaoooo ", temp)
+
+      await updateMatch(matchId, {
+        battingOrder: [nextBatsman, batsman2],
+        currentBatsman: nextBatsman,
+        
+        selectedBatsmen: temp,
+      });
     }
   };
 
-  const switchTeam = () => {
+  const switchTeam = async () => {
     setOverHistry(null);
     setSwitchTeamDone(1);
 
@@ -397,14 +505,37 @@ const Match = ({ Id }) => {
     setBattingTeam(curBowlingTeam);
     setBowlingTeam(curBattingTeam);
     setMatchStarted(false);
+
+    await updateMatch(matchId, {
+      overHistory: null,
+      switchTeamDone: 1,
+      switchTeamFlag: 1,
+      target: score + 1,
+      currentBatsman: null,
+      currentBowler: null,
+      curOver: 0,
+      run: 0,
+      battingOrder: [],
+      bowlers: [],
+      score: 0,
+      wickets: 0,
+      battingTeam: curBowlingTeam,
+      bowlingTeam: curBattingTeam,
+      matchStarted: false,
+    });
   };
 
-  const startMatch = () => {
+  const startMatch = async () => {
     console.log("over  ", selectedOvers);
     console.log("batsman  ", battingOrder.length);
 
     if (battingOrder.length >= 2 && currentBowler && selectedOvers) {
       setMatchStarted(true);
+
+      await updateMatch(matchId, {
+        matchStarted: true,
+      });
+
       console.log("from start match function : ");
     } else {
       if (battingOrder.length == 0) alert("select two batsman");
@@ -414,8 +545,13 @@ const Match = ({ Id }) => {
     }
   };
 
-  const endMatch = () => {
+  const endMatch = async () => {
     setMatchStarted(false);
+
+    await updateMatch(matchId, {
+      matchStarted: false,
+    });
+
     alert("End of the match.");
 
     router.push("/match/match-end");
@@ -449,7 +585,7 @@ const Match = ({ Id }) => {
         </p>
       )}
 
-      {bowlingTeam && battingTeam ? (
+      {bowlingTeam && battingTeam  && teams[battingTeam] ?(
         <>
           <div className={styles.flexContainer}>
             {/* left Column*/}
