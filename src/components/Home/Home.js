@@ -12,6 +12,9 @@ const Home = () => {
   const router = useRouter();
 
   const handleToss = async () => {
+
+    if(!selectedTeam1 || !selectedTeam2 || !over) alert("select Team1, team2 and over ")
+    // else if()
   if (selectedTeam1 && selectedTeam2 && over) {
     const teams = [selectedTeam1, selectedTeam2];
     const randomIndex = Math.floor(Math.random() * 2);
@@ -73,6 +76,10 @@ const Home = () => {
 };
 
 
+  // Filter teams for Team1 based on the selectedTeam2
+  const team1Options = Object.keys(teams).filter(
+    (teamName) => teamName !== selectedTeam2
+  );
   // Filter teams for Team2 based on the selectedTeam1
   const team2Options = Object.keys(teams).filter(
     (teamName) => teamName !== selectedTeam1
@@ -88,11 +95,17 @@ const Home = () => {
             onChange={(e) => setSelectedTeam1(e.target.value)}
           >
             <option value="">Select Team 1</option>
-            {Object.keys(teams).map((teamName, index) => (
+
+            {team1Options.map((teamName, index) => (
               <option key={index} value={teamName}>
                 {teamName}
               </option>
             ))}
+            {/* {Object.keys(teams).map((teamName, index) => (
+              <option key={index} value={teamName}>
+                {teamName}
+              </option>
+            ))} */}
           </select>
         </div>
 

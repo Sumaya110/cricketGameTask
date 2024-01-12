@@ -128,18 +128,24 @@
   }
 
 
-
-  
   .table {
     border-collapse: collapse;
-    width: 30%;
+    width: 500px; /* Adjust the width to your preference */
+    margin: 10px;
+    background-color: #0e9f95;
   }
+  
+  /* .table {
+    border-collapse: collapse;
+    width: 30%;
+  } */
   
   .table th, .table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
     color: white;
+    font-size: xx-large;
   }
   
   .table th {
@@ -206,6 +212,7 @@
   text-align: center;
   padding-top: 20px;
   border-radius: 4px;
+  /* font-size: xx-large; */
 }
 
 .myDiv {
@@ -224,10 +231,46 @@
 }
 
 .button3 {
-  margin-left: 135px;
+  /* margin-left: 100px; */
 }
 
 .button4 {
   margin-left: 100px;
 }
+.container3 {
+  display: flex;
+  justify-content: center; /* Center the items horizontally */
+  /* padding-left: 780px; */
+  /* text-align: center; */
+}
 
+.button7 {
+  font-size: larger;
+  background-color: #0a490c;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 10px; /* Add some margin between the buttons */
+  text-align: center;
+}
+
+.button8 {
+  font-size: larger;
+  background-color: #0a490c;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Adjust the margin-left values accordingly */

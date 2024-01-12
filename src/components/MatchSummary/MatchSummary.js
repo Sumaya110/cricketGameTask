@@ -2,8 +2,13 @@
 import React, { useEffect, useState } from "react";
 import teams from "@/data/teams";
 import styles from "./MatchSummary.module.css"; // Add the relevant CSS module
+import { getMatch } from "@/libs/action/matchAction";
+import { useRouter } from 'next/router';
 
-const MatchSummary = () => {
+
+const MatchSummary = ({ Id }) => {
+  const matchId = Id;
+
   const [battingTeam1, setBattingTeam1] = useState(null);
   const [bowlingTeam1, setBowlingTeam1] = useState(null);
 
@@ -13,6 +18,9 @@ const MatchSummary = () => {
   const [batsmen, setBatsmen] = useState([]);
   const [bowlers, setBowlers] = useState([]);
   const [teamSwitched, setTeamSwitched] = useState(null);
+
+
+  
 
   useEffect(() => {
     const battingTeam = JSON.parse(localStorage.getItem("battingTeam"));
@@ -26,31 +34,62 @@ const MatchSummary = () => {
     setBattingTeam2(bowlingTeam);
     setBowlingTeam2(battingTeam);
 
-    const switchTeamDone = JSON.parse(localStorage.getItem("switchTeamDone"));
-    setTeamSwitched(switchTeamDone);
+    // const switchTeamDone = JSON.parse(localStorage.getItem("switchTeamDone"));
+    // setTeamSwitched(switchTeamDone);
+    // console.log("team switched ", switchTeamDone)
+
+    const getData = async () => {
+
+      console.log("match id :", matchId)
+      try {
+        const updatedData = await getMatch(matchId);
+        console.log("from get data updated data : ", updatedData);
+        setTeamSwitched(updatedData.switchTeamDone)
+  
+        if(teamSwitched)
+        {
+          setBatsmen(updatedData.batsmen)
+          setBowlers(updatedData.bowlerArray)
+
+        }
+        else
+        {
+          setBatsmen(updatedData.batsmen)
+          setBowlers(updatedData.bowlerArray)
+        }
+      
+       
+      } catch (error) {
+        console.error("Error fetching match data:", error);
+      }
+    };
+
+    getData()
+
+
   }, []);
 
-  useEffect(() => {
-    const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
-    console.log("from match summary ", Batsmen);
+  // useEffect(() => {
+  //   // const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
+  //   // console.log("from match summary ", Batsmen);
 
-    const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
-    console.log("from match summary ", Bowlers);
+  //   // const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
+  //   // console.log("from match summary ", Bowlers);
 
-    setBatsmen(Batsmen);
-    setBowlers(Bowlers);
-  }, []);
+  //   setBatsmen(Batsmen);
+  //   setBowlers(Bowlers);
+  // }, []);
 
-  useEffect(() => {
-    const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
-    console.log("from match summary batsmen", Batsmen);
+  // useEffect(() => {
+  //   const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
+  //   console.log("from match summary batsmen", Batsmen);
 
-    const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
-    console.log("from match summary bowlers ", Bowlers);
+  //   const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
+  //   console.log("from match summary bowlers ", Bowlers);
 
-    setBatsmen(Batsmen);
-    setBowlers(Bowlers);
-  }, [teamSwitched]);
+  //   setBatsmen(Batsmen);
+  //   setBowlers(Bowlers);
+  // }, [teamSwitched]);
 
   return (
     <div>
