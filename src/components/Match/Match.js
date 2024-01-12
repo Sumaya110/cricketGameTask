@@ -75,6 +75,8 @@ const Match = ({ Id }) => {
     }
   };
 
+
+
   const getData = async () => {
     try {
       const updatedData = await getMatch(matchId);
@@ -146,11 +148,33 @@ const Match = ({ Id }) => {
 
   
   const getBatsmanScore =  async (currentBatsman, run) => {
-    console.log("receiving data in getbatsmanscore ", currentBatsman, run);
+    // console.log("batting order from getBatsmanScore", battingOrder.length)
+    // console.log("receiving data in getbatsmanscore ", currentBatsman, run);
 
-    // const updatedBatsmen = [...batsmen];
+    const updatedBatsmen = [...batsmen];
+    // if(updatedBatsmen.length==0 && battingOrder.length===2)
+    // {
 
-    const updatedBatsmen = Array.isArray(batsmen) ? [...batsmen] : [];
+    //   updatedBatsmen.push({
+    //     name: battingOrder[0],
+    //     runs: 0,
+    //     balls: 0,
+    //     six: 0,
+    //     four: 0,
+    //     out: "Not Out",
+    //   })
+    //   updatedBatsmen.push({
+    //     name: battingOrder[1],
+    //     runs: 0,
+    //     balls: 0,
+    //     six: 0,
+    //     four: 0,
+    //     out: "Not Out",
+    //   })
+
+    // }
+
+    // const updatedBatsmen = Array.isArray(batsmen) ? [...batsmen] : [];
 
     const currentBatsmanIndex = updatedBatsmen.findIndex(
       (batsman) => batsman.name === currentBatsman
@@ -162,7 +186,11 @@ const Match = ({ Id }) => {
         updatedBatsmen[currentBatsmanIndex].runs += run;
         if (run === 4) updatedBatsmen[currentBatsmanIndex].four += 1;
         if (run === 6) updatedBatsmen[currentBatsmanIndex].six += 1;
-      } else updatedBatsmen[currentBatsmanIndex].out = "OUT";
+      } 
+      else 
+      { updatedBatsmen[currentBatsmanIndex].out = "OUT";
+      updatedBatsmen[currentBatsmanIndex].balls += 1;
+    }
     } else {
       updatedBatsmen.push({
         name: currentBatsman,
@@ -183,7 +211,10 @@ const Match = ({ Id }) => {
         // setCurrentBatsmanRun(updatedBatsmen[currentBatsmanIndex].runs);
         if (run === 4) updatedBatsmen[currentBatsmanIndex].four += 1;
         if (run === 6) updatedBatsmen[currentBatsmanIndex].six += 1;
-      } else updatedBatsmen[currentBatsmanIndex].out = "OUT";
+      } else 
+      {updatedBatsmen[currentBatsmanIndex].out = "OUT";
+      updatedBatsmen[currentBatsmanIndex].balls += 1;
+    }
     }
 
     localStorage.setItem("batsmen", JSON.stringify(updatedBatsmen));
@@ -195,10 +226,12 @@ const Match = ({ Id }) => {
       batsmen: updatedBatsmen,
     });
 
-    return updatedBatsmen;
+    // return updatedBatsmen;
+    setBatsmen(updatedBatsmen);
   };
 
   const handleBattingOrderChange = async (player) => {
+    // console.log("batting order from handleBattingOrderChange", battingOrder.length, battingOrder, player)
     if (battingOrder.length === 1) {
       setCurrentBatsman(battingOrder[0]);
       await updateMatch(matchId, {
@@ -207,27 +240,35 @@ const Match = ({ Id }) => {
     }
 
     if (battingOrder.length < 2 && !selectedBatsmen.includes(player)) {
+
+      console.log("dhuklam", battingOrder)
+
+      //  let temp=selectedBatsmen;
+      // temp.push(player);
+
+      // let temp2=battingOrder;
+      // temp2.push(player);
+
       setBattingOrder((prevOrder) => [...prevOrder, player]);
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, player]);
+      // setBattingOrder(temp2)
+      // setSelectedBatsmen(temp)
 
-      let temp=selectedBatsmen;
-      temp.push(player);
+     
 
-      let temp2=battingOrder;
-      temp2.push(player);
-
-      console.log("batsmen and batting order dekhao", temp, temp2)
-      console.log("length dekhao ", battingOrder.length,"  ", selectedBatsmen.length)
+      // console.log("batsmen and batting order dekhao", temp, temp2, player)
+      // console.log("length dekhao ", battingOrder.length,"  ", selectedBatsmen.length)
 
       await updateMatch(matchId, {
-        battingOrder: temp2,
-        selectedBatsmen: temp,
+        battingOrder: battingOrder,
+        selectedBatsmen: selectedBatsmen,
       });
     }
   };
 
   // now handle bowler change
   const handleBowlersChange = async (player) => {
+    // console.log("batting order from handleBowlersChange", battingOrder.length, battingOrder)
     setOverHistry(null);
 
     await updateMatch(matchId, {
@@ -262,10 +303,11 @@ const Match = ({ Id }) => {
   };
 
   const updatePlayerStats = async (player, run) => {
-    // const updatedBowlerArray = [...bowlerArray];
-    console.log("bowler array ", bowlerArray)
-    // const updatedBowlerArray = [...bowlerArray];
-    const updatedBowlerArray = Array.isArray(bowlerArray) ? [...bowlerArray] : [];
+    console.log("batting order from updatePlayerStats", bowlerArray)
+
+    
+    const updatedBowlerArray = [...bowlerArray];
+    // const updatedBowlerArray = Array.isArray(bowlerArray) ? [...bowlerArray] : [];
 
     const currentPlayerIndex = updatedBowlerArray.findIndex(
       (item) => item.name === player
@@ -325,11 +367,13 @@ const Match = ({ Id }) => {
       bowlerArray: updatedBowlerArray,
     });
 
-    return updatedBowlerArray;
+    // return updatedBowlerArray;
+    setBowlerArray(updatedBowlerArray);
   };
 
   //simulate ball
   const simulateBall = async () => {
+  
     await updateData();
     await getData();
 
@@ -358,6 +402,8 @@ const Match = ({ Id }) => {
         // await updateMatch(matchId, {batt :battingOrder[1]})
 
         newBatsman();
+
+        // getBatsmanScore(currentBatsman, "w")
       }
 
       setRun("w");
@@ -371,7 +417,7 @@ const Match = ({ Id }) => {
         setCurrentBatsman(batsman2);
 
         await updateMatch(matchId, {
-          battingOrde: [batsman2, batsman1],
+          battingOrder: [batsman2, batsman1],
           currentBowler: batsman2,
         });
       }
@@ -444,12 +490,15 @@ const Match = ({ Id }) => {
       overHistory: newArray,
     });
 
-    // console.log("sending data to getbatsmanscore ", currentBatsman, runs);
-    setBatsmen(getBatsmanScore(currentBatsman, runs));
-    setBowlerArray(updatePlayerStats(currentBowler, runs));
+     console.log("from simulateball ", bowlerArray);
+    // setBatsmen(getBatsmanScore(currentBatsman, runs));
+    // setBowlerArray(updatePlayerStats(currentBowler, runs));
+    updatePlayerStats(currentBowler, runs)
+    getBatsmanScore(currentBatsman, runs)
   };
 
   const newBatsman = async () => {
+    // console.log("batting order from newBatsman", battingOrder.length)
     const remainingBatsmen = teams[battingTeam].filter(
       (player) => !selectedBatsmen.includes(player)
     );
@@ -480,6 +529,7 @@ const Match = ({ Id }) => {
   };
 
   const switchTeam = async () => {
+    // console.log("batting order from switchTeam", battingOrder.length)
     setOverHistry(null);
     setSwitchTeamDone(1);
 
@@ -526,11 +576,16 @@ const Match = ({ Id }) => {
   };
 
   const startMatch = async () => {
-    console.log("over  ", selectedOvers);
-    console.log("batsman  ", battingOrder.length);
+    // console.log("batting order from startMatch", battingOrder.length)
+
+    // console.log("over  ", selectedOvers);
+    // console.log("batsman  ", battingOrder.length);
+
+    // console.log("match started ", matchStarted);
 
     if (battingOrder.length >= 2 && currentBowler && selectedOvers) {
       setMatchStarted(true);
+      console.log("match started  and length ", matchStarted, battingOrder);
 
       await updateMatch(matchId, {
         matchStarted: true,
@@ -546,6 +601,7 @@ const Match = ({ Id }) => {
   };
 
   const endMatch = async () => {
+    // console.log("batting order from endMatch", battingOrder.length)
     setMatchStarted(false);
 
     await updateMatch(matchId, {
@@ -637,12 +693,12 @@ const Match = ({ Id }) => {
                     <tbody>
                       {battingOrder.map((player, index) => (
                         <tr key={index}>
-                          <td>{player}</td>
-                          {/* <td>
+                          {/* <td>{player}</td> */}
+                           <td>
                             {player === currentBatsman
                               ? `${player}(${run})`
                               : player}
-                          </td> */}
+                          </td> 
                         </tr>
                       ))}
                     </tbody>
