@@ -1,20 +1,17 @@
-import React from 'react'
-import Match from '@/components/Match/Match'
+import React from "react";
+import Match from "@/components/Match/Match";
 
-const id = ({data}) => {
-  return (
-    <Match Id ={data}/>
-  )
-}
+const index = ({ id }) => {
+  return <Match matchId={id} />;
+};
 
-export default id
+export default index;
 
-
-export async function getServerSideProps(context){
+export async function getServerSideProps(context) {
   const id = context.query.id;
-  return{
-    props:{
-      data: id,
-    }
-  }
+  return {
+    props: {
+      id,
+    },
+  };
 }

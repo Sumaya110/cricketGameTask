@@ -4,8 +4,7 @@ import styles from "./Match.module.css";
 import { useRouter } from "next/router";
 import { updateMatch, getMatch } from "@/libs/action/matchAction";
 
-const Match = ({ Id }) => {
-  const matchId = Id;
+const Match = ({ matchId }) => {
   const router = useRouter();
   const [battingTeam, setBattingTeam] = useState(null);
   const [bowlingTeam, setBowlingTeam] = useState(null);
@@ -79,7 +78,6 @@ const Match = ({ Id }) => {
       const updatedData = await getMatch(matchId);
       console.log("updated data : ", updatedData);
 
-      // Use the updatedData to set the state
       setBattingTeam(updatedData.battingTeam);
       setBowlingTeam(updatedData.bowlingTeam);
       setBattingOrder(updatedData.battingOrder);
@@ -127,26 +125,14 @@ const Match = ({ Id }) => {
     setBowlingTeam(team2);
 
     const fetchData = async () => {
-      try {
-        await getData();
-
-        // await updateMatch(matchId, {
-        //   selectedOvers: over,
-        //   battingTeam: team1,
-        //   bowlingTeam: team2,
-        // });
-      } catch (error) {
-        console.error("Error updating data:", error);
-      }
+      await getData();
     };
 
     fetchData();
   }, []);
 
   const getBatsmanScore = async (currentBatsman, run) => {
-    // console.log("batting order from getBatsmanScore", battingOrder.length)
-    // console.log("receiving data in getbatsmanscore ", currentBatsman, run);
-
+   
     const updatedBatsmen = [...batsmen];
     if (updatedBatsmen.length == 0 && battingOrder.length === 2) {
       updatedBatsmen.push({
@@ -166,8 +152,6 @@ const Match = ({ Id }) => {
         out: "Not Out",
       });
     }
-
-    // const updatedBatsmen = Array.isArray(batsmen) ? [...batsmen] : [];
 
     const currentBatsmanIndex = updatedBatsmen.findIndex(
       (batsman) => batsman.name === currentBatsman
@@ -200,7 +184,6 @@ const Match = ({ Id }) => {
       if (run != "w") {
         updatedBatsmen[currentBatsmanIndex].balls += 1;
         updatedBatsmen[currentBatsmanIndex].runs += run;
-        // setCurrentBatsmanRun(updatedBatsmen[currentBatsmanIndex].runs);
         if (run === 4) updatedBatsmen[currentBatsmanIndex].four += 1;
         if (run === 6) updatedBatsmen[currentBatsmanIndex].six += 1;
       } else {
@@ -217,12 +200,10 @@ const Match = ({ Id }) => {
       batsmen: updatedBatsmen,
     });
 
-    // return updatedBatsmen;
     setBatsmen(updatedBatsmen);
   };
 
   const handleBattingOrderChange = async (player) => {
-    // console.log("batting order from handleBattingOrderChange", battingOrder.length, battingOrder, player)
     if (battingOrder.length === 1) {
       setCurrentBatsman(battingOrder[0]);
       await updateMatch(matchId, {
@@ -233,19 +214,8 @@ const Match = ({ Id }) => {
     if (battingOrder.length < 2 && !selectedBatsmen.includes(player)) {
       console.log("dhuklam", battingOrder);
 
-      //  let temp=selectedBatsmen;
-      // temp.push(player);
-
-      // let temp2=battingOrder;
-      // temp2.push(player);
-
       setBattingOrder((prevOrder) => [...prevOrder, player]);
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, player]);
-      // setBattingOrder(temp2)
-      // setSelectedBatsmen(temp)
-
-      // console.log("batsmen and batting order dekhao", temp, temp2, player)
-      // console.log("length dekhao ", battingOrder.length,"  ", selectedBatsmen.length)
 
       await updateMatch(matchId, {
         battingOrder: battingOrder,
@@ -254,9 +224,8 @@ const Match = ({ Id }) => {
     }
   };
 
-  // now handle bowler change
+ 
   const handleBowlersChange = async (player) => {
-    // console.log("batting order from handleBowlersChange", battingOrder.length, battingOrder)
     setOverHistry(null);
 
     await updateMatch(matchId, {
@@ -264,14 +233,11 @@ const Match = ({ Id }) => {
     });
 
     if (bowlers.length === 0 || bowlers[bowlers.length - 1] !== player) {
-      // console.log("print kore dekhao : ", (prevBowlers) => [...prevBowlers, player])
       setCurrentBowler(player);
       setLastBowler(player);
 
       let newArray = bowlers;
       newArray.push(player);
-
-      // console.log("newArray dekhao : ", newArray)
 
       setBowlers((prevBowlers) => [...prevBowlers, player]);
 
@@ -286,11 +252,8 @@ const Match = ({ Id }) => {
   };
 
   const updatePlayerStats = async (player, run) => {
-    console.log("batting order from updatePlayerStats", bowlerArray);
-
     const updatedBowlerArray = [...bowlerArray];
-    // const updatedBowlerArray = Array.isArray(bowlerArray) ? [...bowlerArray] : [];
-
+    
     const currentPlayerIndex = updatedBowlerArray.findIndex(
       (item) => item.name === player
     );
@@ -340,7 +303,7 @@ const Match = ({ Id }) => {
           updatedBowlerArray[currentPlayerIndex].balls / 10;
     }
 
-    console.log("updated stats array", updatedBowlerArray); // Log the updated state
+    console.log("updated stats array", updatedBowlerArray); 
 
     localStorage.setItem("bowlerArray", JSON.stringify(updatedBowlerArray));
     console.log("from match bowler : ", updatedBowlerArray);
@@ -349,11 +312,10 @@ const Match = ({ Id }) => {
       bowlerArray: updatedBowlerArray,
     });
 
-    // return updatedBowlerArray;
     setBowlerArray(updatedBowlerArray);
   };
 
-  //simulate ball
+ 
   const simulateBall = async () => {
     await updateData();
     await getData();
@@ -362,7 +324,7 @@ const Match = ({ Id }) => {
     let runs = Math.floor(Math.random() * 7);
     const curBalls = balls + 1;
 
-    // after wicket gone
+
     if (isWicket) {
       setWickets(wickets + 1);
       await updateMatch(matchId, { wickets: 1 });
@@ -380,20 +342,26 @@ const Match = ({ Id }) => {
         await updateMatch(matchId, { currentBatsman: battingOrder[1] });
         setBattingOrder((prevOrder) => prevOrder.slice(1));
 
-        // await updateMatch(matchId, {batt :battingOrder[1]})
-
         newBatsman();
-
-        // getBatsmanScore(currentBatsman, "w")
       }
 
       setRun("w");
       await updateMatch(matchId, { run: "w" });
       runs = "w";
     } else {
+      if (runs % 2 === 1 && curBalls !== 6) {
+        console.log("heloo dosto ");
+        const [batsman1, batsman2] = battingOrder;
+        setBattingOrder([batsman2, batsman1]);
 
-      if (runs % 2===1 && curBalls !== 6) {
-        console.log("heloo dosto ")
+        setCurrentBatsman(batsman2);
+
+        await updateMatch(matchId, {
+          battingOrder: [batsman2, batsman1],
+          currentBowler: batsman2,
+        });
+      } else if (runs % 2 === 0 && curBalls === 6) {
+        console.log("heloo noshto ");
         const [batsman1, batsman2] = battingOrder;
         setBattingOrder([batsman2, batsman1]);
 
@@ -404,23 +372,9 @@ const Match = ({ Id }) => {
           currentBowler: batsman2,
         });
       }
-      else if (runs % 2 === 0 && curBalls === 6) {
-        console.log("heloo noshto ")
-        const [batsman1, batsman2] = battingOrder;
-        setBattingOrder([batsman2, batsman1]);
 
-        setCurrentBatsman(batsman2);
-
-        await updateMatch(matchId, {
-          battingOrder: [batsman2, batsman1],
-          currentBowler: batsman2,
-        });
-      }
-
-      // setScore((prevScore) => prevScore + runs);
       setScore(score + runs);
-      // const temp= score+runs
-      // console.log("score dekhao : ", )
+  
       setRun(runs);
 
       await updateMatch(matchId, {
@@ -486,14 +440,11 @@ const Match = ({ Id }) => {
     });
 
     console.log("from simulateball ", bowlerArray);
-    // setBatsmen(getBatsmanScore(currentBatsman, runs));
-    // setBowlerArray(updatePlayerStats(currentBowler, runs));
     updatePlayerStats(currentBowler, runs);
     getBatsmanScore(currentBatsman, runs);
   };
 
   const newBatsman = async () => {
-    // console.log("batting order from newBatsman", battingOrder.length)
     const remainingBatsmen = teams[battingTeam].filter(
       (player) => !selectedBatsmen.includes(player)
     );
@@ -505,7 +456,6 @@ const Match = ({ Id }) => {
       setBattingOrder([nextBatsman, batsman2]);
       setCurrentBatsman(nextBatsman);
 
-      // Add the next batsman to the selected batsmen list
       setSelectedBatsmen((prevBatsmen) => [...prevBatsmen, nextBatsman]);
       let temp = selectedBatsmen;
       temp.push(nextBatsman);
@@ -522,7 +472,6 @@ const Match = ({ Id }) => {
   };
 
   const switchTeam = async () => {
-    // console.log("batting order from switchTeam", battingOrder.length)
     setOverHistry(null);
     setSwitchTeamDone(1);
 
@@ -569,13 +518,6 @@ const Match = ({ Id }) => {
   };
 
   const startMatch = async () => {
-    // console.log("batting order from startMatch", battingOrder.length)
-
-    // console.log("over  ", selectedOvers);
-    // console.log("batsman  ", battingOrder.length);
-
-    // console.log("match started ", matchStarted);
-
     if (battingOrder.length >= 2 && currentBowler && selectedOvers) {
       setMatchStarted(true);
       console.log("match started  and length ", matchStarted, battingOrder);
@@ -594,7 +536,6 @@ const Match = ({ Id }) => {
   };
 
   const endMatch = async () => {
-    // console.log("batting order from endMatch", battingOrder.length)
     setMatchStarted(false);
 
     await updateMatch(matchId, {
@@ -611,8 +552,6 @@ const Match = ({ Id }) => {
     await getData();
 
     console.log("before match-summary");
-    // router.push("/match/match-summary");
-    //`/match/match-summary/${matchId}`
     router.push(`/match/match-summary/${matchId}`);
 
     console.log("after match summary");
@@ -656,7 +595,7 @@ const Match = ({ Id }) => {
       {bowlingTeam && battingTeam && teams[battingTeam] ? (
         <>
           <div className={styles.flexContainer}>
-            {/* left Column*/}
+           
             <div className={styles.leftColumn}>
               <h2>Batting Team: {battingTeam}</h2>
               <table>
@@ -682,7 +621,7 @@ const Match = ({ Id }) => {
               </table>
             </div>
 
-            {/*middle column*/}
+           
 
             <div className={styles.centeredContainer}>
               <div className={styles.centeredContainer}>
@@ -755,7 +694,7 @@ const Match = ({ Id }) => {
               </div>
             </div>
 
-            {/* right Column  */}
+            
             <div className={styles.rightColumn}>
               <h2>Bowling Team: {bowlingTeam}</h2>
               <table>

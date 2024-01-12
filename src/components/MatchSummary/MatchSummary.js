@@ -1,7 +1,7 @@
-// components/MatchSummary.js
+
 import React, { useEffect, useState } from "react";
 import teams from "@/data/teams";
-import styles from "./MatchSummary.module.css"; // Add the relevant CSS module
+import styles from "./MatchSummary.module.css"; 
 import { getMatch } from "@/libs/action/matchAction";
 import { useRouter } from 'next/router';
 
@@ -34,9 +34,7 @@ const MatchSummary = ({ Id }) => {
     setBattingTeam2(bowlingTeam);
     setBowlingTeam2(battingTeam);
 
-    // const switchTeamDone = JSON.parse(localStorage.getItem("switchTeamDone"));
-    // setTeamSwitched(switchTeamDone);
-    // console.log("team switched ", switchTeamDone)
+   
 
     const getData = async () => {
 
@@ -69,27 +67,7 @@ const MatchSummary = ({ Id }) => {
 
   }, []);
 
-  // useEffect(() => {
-  //   // const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
-  //   // console.log("from match summary ", Batsmen);
-
-  //   // const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
-  //   // console.log("from match summary ", Bowlers);
-
-  //   setBatsmen(Batsmen);
-  //   setBowlers(Bowlers);
-  // }, []);
-
-  // useEffect(() => {
-  //   const Batsmen = JSON.parse(localStorage.getItem("batsmen"));
-  //   console.log("from match summary batsmen", Batsmen);
-
-  //   const Bowlers = JSON.parse(localStorage.getItem("bowlerArray"));
-  //   console.log("from match summary bowlers ", Bowlers);
-
-  //   setBatsmen(Batsmen);
-  //   setBowlers(Bowlers);
-  // }, [teamSwitched]);
+ 
 
   return (
     <div>
@@ -98,7 +76,7 @@ const MatchSummary = ({ Id }) => {
       </div>
 
       <div className={styles.summaryContainer}>
-        {/* Batting Team Summary */}
+     
 
         <div className={styles.teamSummary}>
           <h2>Batting Team: {battingTeam1}</h2>
@@ -134,7 +112,7 @@ const MatchSummary = ({ Id }) => {
           </table>
         </div>
 
-        {/* Bowling Team Summary */}
+      
         <div className={styles.teamSummary}>
           <h2>Bowling Team: {bowlingTeam1}</h2>
           <table className={styles.summaryTable}>
@@ -175,7 +153,7 @@ const MatchSummary = ({ Id }) => {
           </div>
 
           <div className={styles.summaryContainer}>
-            {/* Batting Team Summary */}
+          
 
             <div className={styles.teamSummary}>
               <h2>Batting Team: {battingTeam2}</h2>
@@ -211,7 +189,7 @@ const MatchSummary = ({ Id }) => {
               </table>
             </div>
 
-            {/* Bowling Team Summary */}
+        
             <div className={styles.teamSummary}>
               <h2>Bowling Team: {bowlingTeam2}</h2>
               <table className={styles.summaryTable}>
